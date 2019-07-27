@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.PermissionDao">
+
+    <select id="findPermissionSetByRoleId" resultType="permission" parameterType="int">
+        SELECT p.* FROM t_role_permission rp,t_permission p WHERE rp.`permission_id`=p.`id` AND rp.`role_id`=#{id}
+    </select>
+
+    <select id="findPermissions" resultType="permission" parameterType="string">
+        select * from t_permission
+        <if test="value!=null and value.length>0">
+            where keyword = #{value} or name = #{value}
+        </if>
+    </select>
+
+<!--    新增权限-->
+    <select id="add" parameterType="permission">
+        insert into t_permission(name,keyword,description) values(#{name},#{keyword},#{description})
+    </select>
+
+    <select id="checkRoleByPermissionId" parameterType="int" resultType="int">
+        select count(*) from t_role_permission where permission_id = #{id}
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_permission where id = #{id}
+    </delete>
+
+    <select id="findById" parameterType="int" resultType="permission">
+        select * from t_permission where id = #{id}
+    </select>
+
+    <update id="edit" parameterType="permission">
+        update t_permission
+        <set>
+            <if test="name !=null">
+                name=#{name},
+            </if>
+            <if test="keyword != null">
+                keyword=#{keyword},
+            </if>
+            <if test="description != null">
+                description=#{description},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="findPermissionList" resultType="permission">
+        select * from t_permission
+    </select>
+
+    <select id="findRolePermissionByRoleId" parameterType="int" resultType="permission">
+        SELECT p.* FROM t_role_permission rp,t_permission p WHERE rp.`permission_id`=p.`id` AND rp.`role_id`=#{id}
+    </select>
+
+    <select id="checkPermissionByRoleId" resultType="int" parameterType="int">
+        select count(*) from t_role_permission where role_id = #{id}
+    </select>
+
+    <insert id="addRoleAndPermission" parameterType="map">
+        insert into t_role_permission values(#{role_id},#{permission_id})
+    </insert>
+
+    <select id="findPermissionIdByRoleId" parameterType="int" resultType="int">
+        select permission_id from t_role_permission where role_id=#{id}
+    </select>
+
+    <delete id="deletePermissionById" parameterType="int">
+        delete from t_role_permission where role_id=#{id}
+    </delete>
+</mapper>

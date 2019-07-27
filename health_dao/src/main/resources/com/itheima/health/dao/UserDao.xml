@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.UserDao">
+
+    <resultMap id="userMap" type="user">
+        <id column="id" property="id"></id>
+        <collection property="roles" column="id" select="com.itheima.health.dao.RoleDao.findRolesByUserId"></collection>
+    </resultMap>
+    <!--使用登录名，查询用户信息-->
+    <select id="findUserByUsername" resultMap="userMap" parameterType="string">
+        select * from t_user where username = #{username}
+    </select>
+
+    <select id="checkUserByRoleId" resultType="int" parameterType="int">
+        select count(*) from  t_user_role where role_id=#{id}
+    </select>
+
+    <!--分页查询用户，必须名称需要使用value-->
+    <select id="findPage" parameterType="string" resultType="user">
+        select * from t_user
+        <if test="value!=null and value.length>0">
+            where username = #{value}
+        </if>
+    </select>
+
+    <!--新增用户-->
+    <insert id="add" parameterType="user">
+        <!--获取新增检查组的id-->
+        <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="int">
+            select last_insert_id()
+        </selectKey>
+        insert into t_user(birthday,gender,username,password,remark,station,telephone) VALUES (#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+
+    <!--新增用户和角色的中间表-->
+    <insert id="addRoleAndUser" parameterType="map">
+        insert into t_user_role(user_id,role_id) values (#{user_id},#{role_id})
+    </insert>
+
+    <!--使用主键ID，查询检查项对象-->
+    <select id="findById" parameterType="int" resultType="user">
+        select * from t_user where id = #{id}
+    </select>
+
+    <!--使用用户id，查询用户和角色的中间表，获取角色的集合-->
+    <select id="findRoleIdsByUserId" parameterType="int" resultType="int">
+        SELECT role_id FROM t_user_role WHERE user_id = #{id}
+    </select>
+
+    <!--使用用户id，查询用户和角色的中间表，获取查询的数量-->
+    <select id="findCountByUserId" parameterType="int" resultType="long">
+        SELECT COUNT(*) FROM t_user_role WHERE user_id = #{id}
+    </select>
+
+    <!--删除检查项-->
+    <delete id="deleteById" parameterType="int">
+        delete from t_user where id = #{id}
+    </delete>
+
+    <!--用户的更新保存-->
+    <update id="editUser" parameterType="user">
+        update t_user
+        <set>
+            <if test="birthday!=null">
+                birthday=#{birthday},
+            </if>
+            <if test="gender!=null">
+                gender=#{gender},
+            </if>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="password!=null">
+                password=#{password},
+            </if>
+            <if test="remark!=null">
+                remark=#{remark},
+            </if>
+            <if test="station!=null">
+                station=#{station},
+            </if>
+            <if test="telephone!=null">
+                telephone=#{telephone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--使用检查组id，删除检查组和检查项的中间表-->
+    <delete id="deleteUserAndRoleByUserId" parameterType="int">
+        delete from t_user_role where user_id = #{id}
+    </delete>
+</mapper>

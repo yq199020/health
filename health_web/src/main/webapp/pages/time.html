@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>八卦时钟</title>
+        <style>
+            *{margin:0;padding:0}
+            #canvas{background-color: rgba(116, 255, 226, 0.96);display: block;}
+        </style>
+    </head>
+    <body>
+          <div style="height: 400px ;width: 400px" >
+              <canvas  id="canvas" ></canvas>
+          </div>
+        
+    </body>
+    <script src="../js/jquery.min.js"></script>
+    <script>
+        var number=["一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","二十一","二十二","二十三","二十四","二十五","二十六","二十七","二十八","二十九","三十","三十一",
+        "三十二","三十三","三十四","三十五","三十六","三十七","三十八","三十九","四十","四十一","四十二","四十三","四十四","四十五","四十六","四十七","四十八","四十九","五十","五十一","五十二","五十三","五十四","五十五","五十六","五十七","五十八","五十九","零"]
+        
+            var ri_zong,myDate,n,y,r,z,h,m,s,fun_mouth,fun_ri,fun_zhou,fun_shi,fun_fen,fun_miao
+            function gettime(){
+                myDate=new Date()
+                n=myDate.getFullYear()
+                y=myDate.getMonth()+1
+                r=myDate.getDate()
+                z=myDate.getDay()
+                h=myDate.getHours()
+                m=myDate.getMinutes()
+                s=myDate.getSeconds()
+                
+                fun_mouth=-myDate.getMonth()
+                fun_ri=-myDate.getDate()+1
+                fun_zhou=-myDate.getDay()+1
+                fun_shi=-myDate.getHours()+1
+                fun_fen=-myDate.getMinutes()+1
+                fun_miao=-myDate.getSeconds()+1
+            }
+            gettime()
+        if(y==1||y==3||y==5||y==7||y==8||y==10||y==12){
+                ri_zong=31
+        }else if(y==2){
+            if(n%4==0){
+                ri_zong=29
+            }else{
+                ri_zong=28
+            }
+        }else{
+                ri_zong=30
+        }
+        
+        
+        // 初始化
+        const ctx=document.getElementById("canvas").getContext("2d");
+        var scr_h=document.documentElement.clientHeight;
+        var scr_w=document.documentElement.clientWidth;
+        
+        $("#canvas").attr("height",scr_h)
+        $("#canvas").attr("width",scr_h)
+        $("#canvas").css({"margin-left":(scr_w-scr_h)/2+"px"})
+        
+        ctx.translate(scr_h/2,scr_h/2)
+        ctx.font="12px Arial";
+        
+        // 月
+        
+        function yue(n,x,z){
+            if(n==0){
+                ctx.font="normal small-caps bold 10px arial";
+            }else{
+                ctx.font="normal small-caps normal 10px arial ";
+            }
+            ctx.rotate(z*(360/12)*Math.PI/180);
+            ctx.rotate(30*Math.PI/180);
+            ctx.fillText("            "+x+"月",0,0);
+            ctx.rotate(-z*(360/12)*Math.PI/180);
+        }
+        
+        
+        // 日
+        function ri(n,x,z){
+            if(n==0){
+                ctx.font="normal small-caps bold 10px arial";
+            }else{
+                ctx.font="normal small-caps normal 10px arial ";
+            }
+            ctx.rotate(z*(360/ri_zong)*Math.PI/180);
+            ctx.rotate((360/ri_zong)*Math.PI/180);
+            ctx.fillText("                          "+x+"日",0,0);
+            ctx.rotate(-z*(360/ri_zong)*Math.PI/180);
+        }
+        
+        // 周
+        function zhou(n,x,z){
+            if(n==0){
+                ctx.font="normal small-caps bold 10px arial";
+            }else{
+                ctx.font="normal small-caps normal 10px arial ";
+            }
+            if(x=="七"){
+                x="日"
+            }
+            ctx.rotate(z*(360/7)*Math.PI/180);
+            ctx.rotate((360/7)*Math.PI/180);
+            ctx.fillText("                                           "+"周"+x,0,0);
+            ctx.rotate(-z*(360/7)*Math.PI/180);
+        }
+        
+        // 时
+        function shi(n,x,z){
+            if(n==0){
+                ctx.font="normal small-caps bold 10px arial";
+            }else{
+                ctx.font="normal small-caps normal 10px arial ";
+            }
+            ctx.rotate(z*(360/24)*Math.PI/180);
+            ctx.rotate((360/24)*Math.PI/180);
+            ctx.fillText("                                                         "+x+"点",0,0);
+            ctx.rotate(-z*(360/24)*Math.PI/180);
+        }
+        
+        
+        // 分
+        function fen(n,x,z){
+            if(n==0){
+                ctx.font="normal small-caps bold 10px arial";
+            }else{
+                ctx.font="normal small-caps normal 10px arial ";
+            }
+            ctx.rotate(z*(360/60)*Math.PI/180);
+            ctx.rotate((360/60)*Math.PI/180);
+            ctx.fillText("                                                                        "+x+"分",0,0);
+            ctx.rotate(-z*(360/60)*Math.PI/180);
+        }
+        
+        // 秒
+        function miao(n,x,z){
+            if(n==0){
+                // ctx.fillStyle="#fff"
+                ctx.font="normal small-caps bold 10px arial";
+            }else{
+                // ctx.fillStyle="#000"
+                ctx.font="normal small-caps normal 10px arial ";
+            }
+            ctx.rotate(z*(360/60)*Math.PI/180);
+            ctx.rotate((360/60)*Math.PI/180);
+            ctx.fillText("                                                                                          "+x+"秒",0,0);
+            ctx.rotate(-z*(360/60)*Math.PI/180);
+        }
+        
+        setInterval(function(){
+            ctx.clearRect(-scr_h/2,-scr_h/2,scr_h,scr_h)
+            gettime()
+            
+            for(let i=fun_mouth;i<12+fun_mouth;i++){
+                yue(i*(-30),number[i-fun_mouth],fun_mouth-1)
+            }
+            console.log(ri_zong)
+            for(let i=fun_ri;i<ri_zong+fun_ri;i++){
+                ri(i*(-360/ri_zong),number[i-fun_ri],fun_ri-1)
+            }
+            for(let i=fun_zhou;i<7+fun_zhou;i++){
+                zhou(i*(-360/7),number[i-fun_zhou],fun_zhou-1)
+            }
+            for(let i=fun_shi;i<24+fun_shi;i++){
+                shi(i*(-360/24),number[i-fun_shi],fun_shi-1)
+            }
+            for(let i=fun_fen;i<60+fun_fen;i++){
+                fen(i*(-360/60),number[i-fun_fen],fun_fen-1)
+            }
+            for(let i=fun_miao;i<60+fun_miao;i++){
+                miao(i*(-360/60),number[i-fun_miao],fun_miao-1)
+            }
+        },1000)
+        
+    </script>
+</html>

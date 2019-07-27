@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.MenuDao">
+
+
+    <select id="findzMenubById" parameterType="int" resultType="menu">
+        SELECT m.* FROM t_menu m,t_role_menu rm WHERE m.id=rm.menu_id and rm.role_id=#{id}
+    </select>
+
+    <select id="findfMenuId" parameterType="int" resultType="menu">
+        SELECT * FROM t_menu WHERE id = #{id}
+    </select>
+
+    <select id="findPage" parameterType="string" resultType="menu">
+        select * from t_menu
+        <if test="value!=null and value.length>0">
+            where  name = #{value}
+        </if>
+    </select>
+
+    <!--    查询所有父级菜单-->
+    <select id="findPrentMenuName" resultType="menu">
+        select * from t_menu where level = 1
+    </select>
+
+    <insert id="add" parameterType="menu">
+        insert into t_menu(name,linkUrl,path,priority,description,icon,level) values (#{name},#{linkUrl},#{path},#{priority},#{description},#{icon},#{level})
+    </insert>
+
+    <select id="findRoleMenuById" parameterType="int" resultType="int">
+        select count(*) from t_role_menu where menu_id=#{id}
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_menu where id=#{id}
+    </delete>
+
+    <select id="findById" parameterType="int" resultType="menu">
+        select * from t_menu where id = #{id}
+    </select>
+
+    <update id="edit" parameterType="menu">
+        update t_menu
+        <set>
+            <if test="name != null">
+                name=#{name},
+            </if>
+            <if test="linkUrl != null">
+                linkUrl=#{linkUrl},
+            </if>
+            <if test="path != null">
+                path=#{path},
+            </if>
+            <if test="priority != null">
+                priority=#{priority},
+            </if>
+            <if test="description != null">
+                description=#{description},
+            </if>
+            <if test="icon != null">
+                icon=#{icon},
+            </if>
+            <if test="level != null">
+                level=#{level},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="findMenuList" resultType="menu">
+        select * from t_menu
+    </select>
+
+    <select id="findRoleMenuBiRoleId" resultType="menu" parameterType="int">
+        SELECT m.* FROM t_role_menu rm,t_menu m WHERE rm.`menu_id`=m.`id` AND rm.`role_id`=#{id}
+    </select>
+
+    <select id="checkMenuByRoleId" parameterType="int" resultType="int">
+        select count(*) from t_role_menu where role_id=#{id}
+    </select>
+
+    <insert id="addRoleAndMenu" parameterType="map">
+        insert into t_role_menu(role_id,menu_id) values(#{role_id},#{menu_id})
+   </insert>
+
+    <select id="findMenuIdByRoleId" resultType="int" parameterType="int">
+        select menu_id from t_role_menu where role_id=#{id}
+    </select>
+
+    <delete id="deleteMenuById" parameterType="int">
+        delete from t_role_menu where role_id=#{id}
+    </delete>
+
+</mapper>
